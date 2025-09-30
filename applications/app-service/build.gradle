@@ -8,7 +8,24 @@ dependencies {
     runtimeOnly('org.springframework.boot:spring-boot-devtools')
     testImplementation 'com.tngtech.archunit:archunit:1.4.1'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
+
+//    testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
 }
+
+//dependencyManagement {
+//    imports {
+//        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+//    }
+//}
+//
+//
+//contracts {
+////        failOnNoContracts = false
+//    testMode = 'WebTestClient'
+//    testFramework = 'JUNIT5'
+//    contractsDslDir = project.file("${project.projectDir}/src/test/java/contracts")
+//    basePackageForTests = 'contracts'
+//}
 
 tasks.register('explodedJar', Copy) {
     with jar

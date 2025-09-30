@@ -41,7 +41,28 @@ subprojects {
         testCompileOnly  "org.projectlombok:lombok:${lombokVersion}"
         testAnnotationProcessor  "org.projectlombok:lombok:${lombokVersion}"
         implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+
+        testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
     }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+
+    contracts {
+        if (project.name == 'app-service') {
+            contractsDslDir = project.file("${project.projectDir}/src/test/java/contracts")
+        }
+        else {
+            failOnNoContracts = false
+        }
+        testMode = 'WebTestClient'
+        testFramework = 'JUNIT5'
+        basePackageForTests = 'contracts'
+    }
+
 
     tasks.withType(Test).configureEach {
         if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_13)) {
@@ -105,6 +126,12 @@ tasks.withType(JavaCompile).configureEach {
     options.compilerArgs = [
             '-Amapstruct.suppressGeneratorTimestamp=true'
     ]
+}
+
+tasks.register('printProjectDir') {
+    doLast {
+        println "Project directory: ${project.projectDir}/applications/app-service/src/test/java/contracts"
+    }
 }
 
 pitestReportAggregate {
