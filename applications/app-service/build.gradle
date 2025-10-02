@@ -1,4 +1,6 @@
 apply plugin: 'org.springframework.boot'
+apply plugin: 'org.springframework.cloud.contract'
+apply plugin: 'org.springframework.boot'
 
 dependencies {
 	implementation project(':reactive-web')
@@ -8,24 +10,29 @@ dependencies {
     runtimeOnly('org.springframework.boot:spring-boot-devtools')
     testImplementation 'com.tngtech.archunit:archunit:1.4.1'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
-
-//    testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+    testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+    testImplementation 'io.rest-assured:spring-web-test-client'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-//dependencyManagement {
-//    imports {
-//        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-//    }
-//}
-//
-//
-//contracts {
-////        failOnNoContracts = false
-//    testMode = 'WebTestClient'
-//    testFramework = 'JUNIT5'
-//    contractsDslDir = project.file("${project.projectDir}/src/test/java/contracts")
-//    basePackageForTests = 'contracts'
-//}
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+contracts {
+    if (project.name == 'app-service') {
+        contractsDslDir = project.file("${project.projectDir}/src/test/java/contracts")
+        baseClassForTests = 'contracts.BaseTestClass'
+    } else {
+        failOnNoContracts = false
+    }
+    testMode = 'WebTestClient'
+    testFramework = 'JUNIT5'
+    basePackageForTests = 'contracts'
+}
 
 tasks.register('explodedJar', Copy) {
     with jar

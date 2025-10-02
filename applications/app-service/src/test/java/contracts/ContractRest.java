@@ -12,24 +12,29 @@ public class ContractRest implements Supplier<Collection<Contract>> {
     @Override
     public Collection<Contract> get() {
         return Collections.singletonList(Contract.make(contract -> {
-            contract.description("Some description");
-            contract.name("some name");
-            contract.priority(8);
-            contract.ignored();
+            contract.description("Should return greeting when valid person data is provided");
+            contract.name("shouldReturnGreetingForValidPerson");
             contract.request(request -> {
                 request.url("/api/hello");
                 request.method(request.POST());
-                request.body(ContractVerifierUtil.map().entry("name", request.$(request.anyAlphaUnicode())).entry(
-                        "surname", request.$(request.anyNonBlankString())));
+                request.headers(headers -> {
+                    headers.contentType(headers.applicationJson());
+                });
+                request.body(ContractVerifierUtil.map()
+                        .entry("name", request.$(request.consumer(request.anyAlphaUnicode()), request.producer("Juan")))
+                        .entry("surname", request.$(request.consumer(request.anyNonBlankString()), request.producer("Perez"))));
                 request.bodyMatchers(bodyMatchers -> {
-                    bodyMatchers.jsonPath("$.name", bodyMatchers.byRegex(".*"));
+                    bodyMatchers.jsonPath("$.name", bodyMatchers.byRegex("[a-zA-Z]+"));
                     bodyMatchers.jsonPath("$.surname", bodyMatchers.byRegex(".+"));
                 });
             });
             contract.response(response -> {
-                response.fixedDelayMilliseconds(1000);
                 response.status(response.OK());
-                response.body("Hello Juan Perez");
+                response.headers(headers -> {
+                    headers.contentType(headers.textPlain());
+                });
+                response.body(response.$(response.consumer(response.anyNonBlankString()), 
+                                      response.producer("Hello Juan Perez")));
             });
         }));
     }
