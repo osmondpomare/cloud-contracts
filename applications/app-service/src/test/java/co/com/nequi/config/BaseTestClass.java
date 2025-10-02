@@ -1,4 +1,4 @@
-package contracts;
+package co.com.nequi.config;
 
 import co.com.nequi.MainApplication;
 import io.restassured.module.webtestclient.RestAssuredWebTestClient;

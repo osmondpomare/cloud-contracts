@@ -53,6 +53,7 @@ subprojects {
 
     contracts {
         if (project.name == 'app-service') {
+            packageWithBaseClasses = 'co.com.nequi.config'
             contractsDslDir = project.file("${project.projectDir}/src/test/java/contracts")
         }
         else {

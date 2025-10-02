@@ -22,10 +22,11 @@ public class ContractRest implements Supplier<Collection<Contract>> {
                 });
                 request.body(ContractVerifierUtil.map()
                         .entry("name", request.$(request.consumer(request.anyAlphaUnicode()), request.producer("Juan")))
-                        .entry("surname", request.$(request.consumer(request.anyNonBlankString()), request.producer("Perez"))));
+                        .entry("surname", request.$(request.consumer(request.anyNonBlankString()), request.producer(
+                                "    "))));
                 request.bodyMatchers(bodyMatchers -> {
                     bodyMatchers.jsonPath("$.name", bodyMatchers.byRegex("[a-zA-Z]+"));
-                    bodyMatchers.jsonPath("$.surname", bodyMatchers.byRegex(".+"));
+                    bodyMatchers.jsonPath("$.surname", bodyMatchers.byRegex("[a-zA-Z]+"));
                 });
             });
             contract.response(response -> {
